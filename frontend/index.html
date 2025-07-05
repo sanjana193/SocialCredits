@@ -27,7 +27,7 @@
   <script>
   document.getElementById('signupForm').addEventListener('submit', e => {
     e.preventDefault();
-    fetch(`http://localhost:3000/api/user/register`, {
+    fetch(`http://socialcredits-235e.onrender.com/api/user/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -46,7 +46,7 @@
 
   document.getElementById('loginForm').addEventListener('submit', e => {
     e.preventDefault();
-    fetch(`http://localhost:3000/api/user/login`, {
+    fetch(`http://socialcredits-235e.onrender.com/api/user/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
