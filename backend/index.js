@@ -5,6 +5,10 @@ const helpRoutes = require('./routes/helpRoutes');
 const requestRoutes = require('./routes/requestRoutes');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const attendanceRoutes = require('./routes/attendanceRoutes');
+const assignmentRoutes = require('./routes/assignmentRoutes');
+const noticeRoutes = require('./routes/noticeRoutes');
+const facultyRoutes = require('./routes/facultyRoutes');
 
 const app = express();
 
@@ -29,6 +33,10 @@ app.use('/api/help', helpRoutes);
 app.use('/api/request', requestRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/attendance', attendanceRoutes);
+app.use('/api/assignment', assignmentRoutes);
+app.use('/api/notices', noticeRoutes);
+app.use('/api/faculty', require('./routes/facultyRoutes'));
 
 
 app.listen(3000, () => {

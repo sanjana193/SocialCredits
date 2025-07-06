@@ -3,66 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <title>Time Banking ERP - Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="text-center p-5">
+
+<body class="text-center p-4">
   <h1>⏳ Time Banking ERP</h1>
   <p class="lead">Sign up or log in below!</p>
 
   <div class="container mt-4">
-    <h4>Sign Up</h4>
-    <form id="signupForm" class="mb-4">
-      <input type="text" id="signupName" placeholder="Name" required class="form-control mb-2">
-      <input type="email" id="signupEmail" placeholder="Email" required class="form-control mb-2">
-      <button class="btn btn-primary">Sign Up</button>
-    </form>
+    <div class="row">
+      <div class="col-md-6 mx-auto">
 
-    <h4>Log In</h4>
-    <form id="loginForm">
-      <input type="email" id="loginEmail" placeholder="Email" required class="form-control mb-2">
-      <button class="btn btn-success">Log In</button>
-    </form>
+        <div class="card p-3 mb-4">
+          <h4>Sign Up</h4>
+          <form id="signupForm">
+            <input type="text" id="signupName" placeholder="Name" required class="form-control mb-2">
+            <input type="email" id="signupEmail" placeholder="Email" required class="form-control mb-2">
+
+            <select id="signupRole" class="form-control mb-2" required>
+              <option value="">Select Role</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+              <option value="faculty">Faculty</option>
+            </select>
+
+            <select id="signupDepartment" class="form-control mb-2" required>
+              <option value="">Select Department</option>
+              <option value="CSE">CSE</option>
+              <option value="AIML">AIML</option>
+              <option value="MECH">MECH</option>
+            </select>
+
+            <input type="number" id="signupYear" placeholder="Year (1-4)" min="1" max="4" class="form-control mb-2">
+
+            <button class="btn btn-primary w-100">Sign Up</button>
+          </form>
+        </div>
+
+        <div class="card p-3">
+          <h4>Log In</h4>
+          <form id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Email" required class="form-control mb-2">
+            <button class="btn btn-success w-100">Log In</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
   </div>
 
-  <script>
-  document.getElementById('signupForm').addEventListener('submit', e => {
-    e.preventDefault();
-    fetch(`http://localhost:3000/api/user/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: document.getElementById('signupName').value,
-        email: document.getElementById('signupEmail').value
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message);
-      if (data.user) {
-        window.location.href = `user_dashboard.html?userId=${data.user._id}`;
-      }
-    });
-  });
+<script>
+const api = `http://localhost:3000/api`;
 
-  document.getElementById('loginForm').addEventListener('submit', e => {
-    e.preventDefault();
-    fetch(`http://localhost:3000/api/user/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: document.getElementById('loginEmail').value
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.user) {
-        alert(data.message);
-        window.location.href = `user_dashboard.html?userId=${data.user._id}`;
-      } else {
-        alert('Login failed: ' + data.message);
-      }
-    });
+// enable/disable year field
+document.getElementById('signupRole').addEventListener('change', () => {
+  const role = document.getElementById('signupRole').value;
+  const yearInput = document.getElementById('signupYear');
+  if (role === 'user') {
+    yearInput.disabled = false;
+    yearInput.required = true;
+  } else {
+    yearInput.disabled = true;
+    yearInput.required = false;
+    yearInput.value = '';
+  }
+});
+
+// signup
+document.getElementById('signupForm').addEventListener('submit', e => {
+  e.preventDefault();
+
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const role = document.getElementById('signupRole').value;
+  const department = document.getElementById('signupDepartment').value;
+  const year = document.getElementById('signupYear').value
+              ? parseInt(document.getElementById('signupYear').value, 10) : undefined;
+
+  if (!name || !email || !role || !department) {
+    return alert('Please fill all required fields.');
+  }
+
+  fetch(`${api}/user/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, role, department, year })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message || 'Registered');
+    if (data.user) {
+      redirectToDashboard(data.user);
+    }
   });
-  </script>
+});
+
+// login
+document.getElementById('loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+
+  const email = document.getElementById('loginEmail').value.trim();
+
+  fetch(`${api}/user/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.user) {
+      alert(data.message || 'Logged In');
+      redirectToDashboard(data.user);
+    } else {
+      alert('Login failed: ' + (data.message || 'Invalid email'));
+    }
+  });
+});
+
+function redirectToDashboard(user) {
+  const role = user.role;
+  if (role === 'user') {
+    window.location.href = `user_dashboard.html?userId=${user._id}`;
+  } else if (role === 'faculty') {
+    window.location.href = `faculty_dashboard.html?userId=${user._id}`;
+  } else if (role === 'admin') {
+    window.location.href = `admin_dashboard.html?userId=${user._id}`;
+  } else {
+    alert('Unknown role: ' + role);
+  }
+}
+</script>
 </body>
 </html>

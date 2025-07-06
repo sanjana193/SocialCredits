@@ -134,6 +134,34 @@ h1 {
     </div>
   </div>
 </div>
+ <div class="table-responsive mb-4">
+    <h3>📋 Notices</h3>
+    <table class="table table-bordered" id="noticesTable">
+      <thead>
+        <tr>
+          <th>Title</th><th>Content</th><th>Target</th><th>Department</th><th>Year</th><th>Valid Till</th>
+        </tr>
+      </thead>
+      <tbody><tr><td colspan="6">Loading notices…</td></tr></tbody>
+    </table>
+  </div>
+<div class="card section">
+  <div class="card-header">
+    📄 My Attendance
+  </div>
+  <div class="card-body">
+    <ul id="myAttendance">Loading…</ul>
+  </div>
+</div>
+
+<div class="card section">
+  <div class="card-header">
+    📄 My Assignments
+  </div>
+  <div class="card-body">
+    <ul id="myAssignments">Loading…</ul>
+  </div>
+</div>
 
 <script>
 // ⚡ Existing JS code kept as is
@@ -143,10 +171,41 @@ if (!userId) alert("Please login properly");
 
 const api = `http://localhost:3000/api`;
 
-fetch(`${api}/user/${userId}`).then(r => r.json()).then(u => {
+fetch(`${api}/user/${userId}`)
+.then(r => r.json())
+.then(u => {
   document.getElementById('myName').textContent = u.name;
   document.getElementById('myCredits').textContent = u.credits;
+
+  const params = new URLSearchParams({
+    role: 'students',
+    department: u.department,
+    year: u.year
+  });
+
+  fetch(`${api}/notices?${params}`)
+    .then(r => r.json())
+    .then(notices => {
+      const tbody = document.querySelector('#noticesTable tbody');
+      tbody.innerHTML = '';
+      if (!notices.length) {
+        tbody.innerHTML = `<tr><td colspan="6">No notices available for you.</td></tr>`;
+        return;
+      }
+      notices.forEach(n => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td>${n.title}</td>
+          <td>${n.content}</td>
+          <td>${n.targetAudience}</td>
+          <td>${n.department || '-'}</td>
+          <td>${n.year || '-'}</td>
+          <td>${new Date(n.validTill).toLocaleDateString()}</td>
+        `;
+      });
+    });
 });
+
 
 fetch(`${api}/admin/users`).then(r => r.json()).then(users => {
   const sel = document.getElementById('toUserId');
@@ -208,6 +267,60 @@ fetch(`${api}/request/generalPending/${userId}`).then(r => r.json()).then(reqs =
     ul.appendChild(li);
   });
 });
+loadAttendance();
+loadAssignments();
+
+function loadAttendance() {
+  fetch(`${api}/attendance/user/${userId}`)
+  .then(r => r.json())
+  .then(records => {
+    const ul = document.getElementById('myAttendance');
+    ul.innerHTML = '';
+    if (!records.length) {
+      ul.innerHTML = '<li>No attendance records yet.</li>';
+      return;
+    }
+    records.forEach(r => {
+      const li = document.createElement('li');
+      li.textContent = `${r.subject}: ${r.status} (${new Date(r.date).toLocaleDateString()})`;
+      ul.appendChild(li);
+    });
+  });
+}
+
+function loadAssignments() {
+  fetch(`${api}/assignment/user/${userId}`)
+  .then(r => r.json())
+  .then(tasks => {
+    const ul = document.getElementById('myAssignments');
+    ul.innerHTML = '';
+    if (!tasks.length) {
+      ul.innerHTML = '<li>No assignments yet.</li>';
+      return;
+    }
+    tasks.forEach(t => {
+      const li = document.createElement('li');
+      li.textContent = `${t.task}`;
+      const submitBtn = document.createElement('button');
+      submitBtn.textContent = 'Submit';
+      submitBtn.className = 'btn btn-sm btn-success ms-2';
+      submitBtn.onclick = () => submitAssignment(t._id);
+      li.appendChild(submitBtn);
+      ul.appendChild(li);
+    });
+  });
+}
+
+function submitAssignment(assignmentId) {
+  fetch(`${api}/assignment/submit/${assignmentId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ student: userId })
+  }).then(() => {
+    alert('Assignment submitted!');
+    loadAssignments();
+  });
+}
 
 document.getElementById('logHelpForm').addEventListener('submit', e => {
   e.preventDefault();

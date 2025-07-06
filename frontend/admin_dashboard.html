@@ -19,86 +19,123 @@
         <li class="nav-item"><a class="nav-link" href="#logs">📝 Help Logs</a></li>
         <li class="nav-item"><a class="nav-link" href="#requests">📄 Requests</a></li>
         <li class="nav-item"><a class="nav-link" href="#charts">📊 Charts</a></li>
-
-    </ul>
+        <li class="nav-item"><a class="nav-link" href="#notices">📢 Notices</a></li>
+      </ul>
     </div>
   </div>
 </nav>
 
 <div class="container mt-4">
-
-  <!-- Leaderboard -->
-  <section id="leaderboard">
-    <h2>🏆 Leaderboard</h2>
-    <div class="row mb-4" id="leaderboardCards"></div>
-  </section>
-
-  <!-- Charts -->
-<section id="charts">
-  <h2>📊 Insights & Charts</h2>
+<section id="notices">
+  <h2>📢 Notices & Announcements</h2>
   <div class="row">
-    <div class="col-md-6 mb-4">
-      <canvas id="creditsChart"></canvas>
+    <div class="col-md-6">
+      <form id="noticeForm">
+        <input type="text" id="noticeTitle" class="form-control mb-2" placeholder="Title" required>
+        <textarea id="noticeContent" class="form-control mb-2" placeholder="Content" required></textarea>
+        <select id="noticeAudience" class="form-control mb-2">
+          <option value="all">All</option>
+          <option value="students">Students</option>
+          <option value="faculty">Faculty</option>
+        </select>
+        <input type="text" id="noticeDepartment" class="form-control mb-2" placeholder="Department (optional)">
+        <input type="number" id="noticeYear" class="form-control mb-2" placeholder="Year (optional)">
+        <input type="date" id="noticeValidTill" class="form-control mb-2">
+        <button class="btn btn-success">Post Notice</button>
+      </form>
     </div>
-    <div class="col-md-6 mb-4">
-      <canvas id="tasksChart"></canvas>
+
+    <h2>📋 Posted Notices</h2>
+    <button class="btn btn-sm btn-outline-primary mb-2" onclick="downloadCSV('noticesTable', 'notices.csv')">Download</button>
+    <div class="table-responsive">
+      <table class="table table-bordered" id="noticesTable">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Target</th>
+            <th>Department</th>
+            <th>Year</th>
+            <th>Valid Till</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="6">Loading notices…</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
 
-  <!-- Users -->
-  <section id="users">
-    <h2>👥 All Users</h2>
-    <input class="form-control mb-3" id="searchInput" placeholder="Search users/logs/requests..." oninput="filterTables()">
-    <button class="btn btn-sm btn-outline-primary mb-2" onclick="downloadCSV('usersTable', 'users.csv')">Download</button>
-    <div class="table-responsive">
-      <table class="table table-bordered" id="usersTable">
-        <thead><tr><th>Name</th><th>Email</th><th>Credits</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
+<section id="leaderboard">
+  <h2>🏆 Leaderboard</h2>
+  <div class="row mb-4" id="leaderboardCards"></div>
+</section>
 
-  <!-- Logs -->
-  <section id="logs">
-    <h2>📝 All Help Logs</h2>
-    <button class="btn btn-sm btn-outline-primary mb-2" onclick="downloadCSV('logsTable', 'help_logs.csv')">Download</button>
-    <div class="table-responsive">
-      <table class="table table-bordered" id="logsTable">
-        <thead><tr><th>From</th><th>To</th><th>Task</th><th>Hours</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
+<section id="charts">
+  <h2>📊 Insights & Charts</h2>
+  <div class="row">
+    <div class="col-md-6 mb-4"><canvas id="creditsChart"></canvas></div>
+    <div class="col-md-6 mb-4"><canvas id="tasksChart"></canvas></div>
+  </div>
+</section>
 
-  <!-- Requests -->
-  <section id="requests">
-    <h2>📄 All Help Requests</h2>
-    <button class="btn btn-sm btn-outline-primary mb-2" onclick="downloadCSV('requestsTable', 'requests.csv')">Download</button>
-    <div class="table-responsive">
-      <table class="table table-bordered" id="requestsTable">
-        <thead><tr><th>User</th><th>Task</th><th>Credits</th><th>Status</th><th>Fulfiller</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
+<section id="users">
+  <h2>👥 All Users</h2>
+  <input class="form-control mb-3" id="searchInput" placeholder="Search…" oninput="filterTables()">
+  <button class="btn btn-sm btn-outline-primary mb-2" onclick="downloadCSV('usersTable', 'users.csv')">Download</button>
+  <div class="table-responsive">
+    <table class="table table-bordered" id="usersTable">
+      <thead><tr><th>Name</th><th>Email</th><th>Credits</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
 
+<section id="logs">
+  <h2>📝 All Help Logs</h2>
+  <button class="btn btn-sm btn-outline-primary mb-2" onclick="downloadCSV('logsTable', 'help_logs.csv')">Download</button>
+  <div class="table-responsive">
+    <table class="table table-bordered" id="logsTable">
+      <thead><tr><th>From</th><th>To</th><th>Task</th><th>Hours</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="requests">
+  <h2>📄 All Help Requests</h2>
+  <button class="btn btn-sm btn-outline-primary mb-2" onclick="downloadCSV('requestsTable', 'requests.csv')">Download</button>
+  <div class="table-responsive">
+    <table class="table table-bordered" id="requestsTable">
+      <thead><tr><th>User</th><th>Task</th><th>Credits</th><th>Status</th><th>Fulfiller</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
 </div>
 
 <script>
 const apiBase = `http://localhost:3000/api/admin`;
 
-document.addEventListener('DOMContentLoaded', loadDashboard);
+document.addEventListener('DOMContentLoaded', () => {
+  loadDashboard();
+});
 
 async function loadDashboard() {
-  const users = await fetch(`${apiBase}/users`).then(r => r.json());
-  const logs = await fetch(`${apiBase}/logs`).then(r => r.json());
-  const requests = await fetch(`${apiBase}/requests`).then(r => r.json());
+  const [users, logs, requests, notices] = await Promise.all([
+    fetch(`${apiBase}/users`).then(r => r.json()),
+    fetch(`${apiBase}/logs`).then(r => r.json()),
+    fetch(`${apiBase}/requests`).then(r => r.json()),
+    fetch(`http://localhost:3000/api/notices/all`).then(r => r.json())
+  ]);
 
   populateUsers(users);
   populateLogs(logs);
   populateRequests(requests);
   populateLeaderboard(users);
+  renderCharts(users, logs);
+  populateNotices(notices);
 }
 
 function populateUsers(users) {
@@ -146,20 +183,69 @@ function populateLeaderboard(users) {
       </div>`;
   });
 }
-async function loadDashboard() {
-  const users = await fetch(`${apiBase}/users`).then(r => r.json());
-  const logs = await fetch(`${apiBase}/logs`).then(r => r.json());
-  const requests = await fetch(`${apiBase}/requests`).then(r => r.json());
 
-  populateUsers(users);
-  populateLogs(logs);
-  populateRequests(requests);
-  populateLeaderboard(users);
-  renderCharts(users, logs);
+function populateNotices(notices) {
+     console.log("Notices received:", notices);
+  const tbody = document.querySelector('#noticesTable tbody');
+  if (!tbody) return console.error("Notices table body not found.");
+  tbody.innerHTML = '';
+  if (!notices.length) {
+    tbody.innerHTML = `<tr><td colspan="6">No notices available</td></tr>`;
+    return;
+  }
+
+  notices.forEach(n => {
+    const row = tbody.insertRow();
+    row.innerHTML = `
+      <td>${n.title}</td>
+      <td>${n.content}</td>
+      <td>${n.targetAudience}</td>
+      <td>${n.department || '-'}</td>
+      <td>${n.year || '-'}</td>
+      <td>${n.validTill ? new Date(n.validTill).toLocaleDateString() : '-'}</td>`;
+  });
 }
 
+// 📄 Handles notice form submission
+document.getElementById('noticeForm').addEventListener('submit', e => {
+  e.preventDefault();
+
+  const title = document.getElementById('noticeTitle').value.trim();
+  const content = document.getElementById('noticeContent').value.trim();
+  const targetAudience = document.getElementById('noticeAudience').value;
+  const department = document.getElementById('noticeDepartment').value.trim();
+  const year = document.getElementById('noticeYear').value;
+  const validTill = document.getElementById('noticeValidTill').value;
+
+  fetch(`http://localhost:3000/api/notices`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      title, content, createdBy: 'ADMIN_ID',
+      targetAudience, department: department || undefined,
+      year: year || undefined, validTill: validTill || undefined
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message || 'Notice created');
+    document.getElementById('noticeForm').reset();
+    loadDashboard();
+  })
+  .catch(err => alert(err.message));
+});
+
+let creditsChartInstance = null;
+let tasksChartInstance = null;
+
 function renderCharts(users, logs) {
-  // 👥 Calculate total hours spent helping others by user
+  if (creditsChartInstance) {
+    creditsChartInstance.destroy();
+  }
+  if (tasksChartInstance) {
+    tasksChartInstance.destroy();
+  }
+
   const userHoursMap = {};
   logs.forEach(l => {
     if (!userHoursMap[l.from_user._id]) {
@@ -171,12 +257,12 @@ function renderCharts(users, logs) {
   const sortedUsers = Object.values(userHoursMap).sort((a, b) => b.hours - a.hours).slice(0, 5);
 
   const creditsCtx = document.getElementById('creditsChart').getContext('2d');
-  new Chart(creditsCtx, {
+  creditsChartInstance = new Chart(creditsCtx, {
     type: 'bar',
     data: {
       labels: sortedUsers.map(u => u.name),
       datasets: [{
-        label: 'Hours Spent Helping Others',
+        label: 'Hours Helping Others',
         data: sortedUsers.map(u => u.hours),
         backgroundColor: 'rgba(75, 192, 192, 0.7)'
       }]
@@ -190,14 +276,13 @@ function renderCharts(users, logs) {
     }
   });
 
-  // 📊 Task distribution from logs
   const taskCounts = {};
   logs.forEach(l => {
     taskCounts[l.task] = (taskCounts[l.task] || 0) + 1;
   });
 
   const tasksCtx = document.getElementById('tasksChart').getContext('2d');
-  new Chart(tasksCtx, {
+  tasksChartInstance = new Chart(tasksCtx, {
     type: 'doughnut',
     data: {
       labels: Object.keys(taskCounts),
@@ -209,7 +294,7 @@ function renderCharts(users, logs) {
           'rgba(54,162,235,0.7)',
           'rgba(255,206,86,0.7)',
           'rgba(75,192,192,0.7)',
-          'rgba(153,102,255,0.7)',
+          'rgba(153,102,255,0.7)'
         ]
       }]
     },
@@ -223,13 +308,9 @@ function renderCharts(users, logs) {
 }
 
 
-
 function downloadCSV(tableId, filename) {
   const rows = Array.from(document.querySelectorAll(`#${tableId} tr`));
-  const csv = rows.map(r => 
-      Array.from(r.cells).map(c => `"${c.innerText}"`).join(',')
-  ).join('\n');
-
+  const csv = rows.map(r => Array.from(r.cells).map(c => `"${c.innerText}"`).join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
