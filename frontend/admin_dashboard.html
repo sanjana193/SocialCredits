@@ -2,329 +2,210 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body {
+  overflow-x: hidden;
+}
+#sidebar {
+  min-height: 100vh;
+  background-color: #343a40;
+}
+#sidebar .nav-link {
+  color: #ddd;
+}
+#sidebar .nav-link.active {
+  background-color: #495057;
+  color: #fff;
+}
+.section {
+  display: none;
+}
+.section.active {
+  display: block;
+}
+</style>
 </head>
+
 <body>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Admin Dashboard</a>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="#leaderboard">🏆 Leaderboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="#users">👥 Users</a></li>
-        <li class="nav-item"><a class="nav-link" href="#logs">📝 Help Logs</a></li>
-        <li class="nav-item"><a class="nav-link" href="#requests">📄 Requests</a></li>
-        <li class="nav-item"><a class="nav-link" href="#charts">📊 Charts</a></li>
-        <li class="nav-item"><a class="nav-link" href="#notices">📢 Notices</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<div class="container mt-4">
-<section id="notices">
-  <h2>📢 Notices & Announcements</h2>
+<div class="container-fluid">
   <div class="row">
-    <div class="col-md-6">
-      <form id="noticeForm">
-        <input type="text" id="noticeTitle" class="form-control mb-2" placeholder="Title" required>
-        <textarea id="noticeContent" class="form-control mb-2" placeholder="Content" required></textarea>
-        <select id="noticeAudience" class="form-control mb-2">
-          <option value="all">All</option>
-          <option value="students">Students</option>
-          <option value="faculty">Faculty</option>
-        </select>
-        <input type="text" id="noticeDepartment" class="form-control mb-2" placeholder="Department (optional)">
-        <input type="number" id="noticeYear" class="form-control mb-2" placeholder="Year (optional)">
-        <input type="date" id="noticeValidTill" class="form-control mb-2">
-        <button class="btn btn-success">Post Notice</button>
-      </form>
-    </div>
+    <!-- Sidebar -->
+    <nav id="sidebar" class="col-md-2 d-md-block bg-dark sidebar collapse">
+      <div class="position-sticky">
+        <ul class="nav flex-column pt-3">
+          <li class="nav-item">
+            <a class="nav-link active" href="#" data-section="overview">🏠 Overview</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="leaderboard">🏆 Leaderboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="users">👥 Users</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="logs">📝 Logs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="requests">📄 Requests</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="leaveRequests">📅 Leaves</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="notices">📢 Notices</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-section="charts">📈 Analytics</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
 
-    <h2>📋 Posted Notices</h2>
-    <button class="btn btn-sm btn-outline-primary mb-2" onclick="downloadCSV('noticesTable', 'notices.csv')">Download</button>
-    <div class="table-responsive">
-      <table class="table table-bordered" id="noticesTable">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Content</th>
-            <th>Target</th>
-            <th>Department</th>
-            <th>Year</th>
-            <th>Valid Till</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td colspan="6">Loading notices…</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<section id="leaderboard">
-  <h2>🏆 Leaderboard</h2>
-  <div class="row mb-4" id="leaderboardCards"></div>
-</section>
-
-<section id="charts">
-  <h2>📊 Insights & Charts</h2>
+    <!-- Main content -->
+    <main class="col-md-10 ms-sm-auto px-md-4 py-4">
+      <section id="overview" class="section active">
+        <h2>🏠 Overview</h2>
   <div class="row">
-    <div class="col-md-6 mb-4"><canvas id="creditsChart"></canvas></div>
-    <div class="col-md-6 mb-4"><canvas id="tasksChart"></canvas></div>
+    <div class="col-md-3">
+      <div class="card text-bg-primary mb-3">
+        <div class="card-body text-center">
+          <h5>Total Users</h5>
+          <h2 id="tusers">0</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-warning mb-3">
+        <div class="card-body text-center">
+          <h5>Pending Requests</h5>
+          <h2 id="trequests">0</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-success mb-3">
+        <div class="card-body text-center">
+          <h5>Help Logs</h5>
+          <h2 id="thelpLogs">0</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-success mb-3">
+        <div class="card-body text-center">
+          <h5>Total Notices</h5>
+          <h2 id="tnotices">0</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-bg-danger mb-3">
+        <div class="card-body text-center">
+          <h5>Leave Requests</h5>
+          <h2 id="tleaves">0</h2>
+        </div>
+      </div>
+    </div>
   </div>
-</section>
+      </section>
 
-<section id="users">
-  <h2>👥 All Users</h2>
-  <input class="form-control mb-3" id="searchInput" placeholder="Search…" oninput="filterTables()">
-  <button class="btn btn-sm btn-outline-primary mb-2" onclick="downloadCSV('usersTable', 'users.csv')">Download</button>
-  <div class="table-responsive">
-    <table class="table table-bordered" id="usersTable">
-      <thead><tr><th>Name</th><th>Email</th><th>Credits</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</section>
+      <section id="leaderboard" class="section">
+        <h2>🏆 Leaderboard</h2>
+        <div id="leaderboardCards" class="row"></div>
+      </section>
 
-<section id="logs">
-  <h2>📝 All Help Logs</h2>
-  <button class="btn btn-sm btn-outline-primary mb-2" onclick="downloadCSV('logsTable', 'help_logs.csv')">Download</button>
-  <div class="table-responsive">
-    <table class="table table-bordered" id="logsTable">
-      <thead><tr><th>From</th><th>To</th><th>Task</th><th>Hours</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</section>
+      <section id="users" class="section">
+        <h2>👥 Users</h2>
+        <input class="form-control mb-3" id="searchInput" placeholder="Search…" oninput="filterTables()">
+        <table class="table table-bordered" id="usersTable">
+          <thead><tr><th>Name</th><th>Email</th><th>Credits</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
 
-<section id="requests">
-  <h2>📄 All Help Requests</h2>
-  <button class="btn btn-sm btn-outline-primary mb-2" onclick="downloadCSV('requestsTable', 'requests.csv')">Download</button>
-  <div class="table-responsive">
-    <table class="table table-bordered" id="requestsTable">
-      <thead><tr><th>User</th><th>Task</th><th>Credits</th><th>Status</th><th>Fulfiller</th></tr></thead>
-      <tbody></tbody>
-    </table>
+      <section id="logs" class="section">
+        <h2>📝 Logs</h2>
+        <table class="table table-bordered" id="logsTable">
+          <thead><tr><th>From</th><th>To</th><th>Task</th><th>Hours</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section id="requests" class="section">
+        <h2>📄 Requests</h2>
+        <table class="table table-bordered" id="requestsTable">
+          <thead><tr><th>User</th><th>Task</th><th>Credits</th><th>Status</th><th>Fulfiller</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section id="leaveRequests" class="section">
+        <h2>📅 Leave Requests</h2>
+        <ul id="allLeaves" class="list-group"></ul>
+      </section>
+
+      <section id="notices" class="section">
+        <h2>📢 Notices & Announcements</h2>
+        <div class="row">
+          <div class="col-md-6">
+            <form id="noticeForm">
+              <input type="text" id="noticeTitle" class="form-control mb-2" placeholder="Title" required>
+              <textarea id="noticeContent" class="form-control mb-2" placeholder="Content" required></textarea>
+              <select id="noticeAudience" class="form-control mb-2">
+                <option value="all">All</option>
+                <option value="students">Students</option>
+                <option value="faculty">Faculty</option>
+              </select>
+              <input type="text" id="noticeDepartment" class="form-control mb-2" placeholder="Department (optional)">
+              <input type="number" id="noticeYear" class="form-control mb-2" placeholder="Year (optional)">
+              <input type="date" id="noticeValidTill" class="form-control mb-2">
+              <button class="btn btn-success">Post Notice</button>
+            </form>
+          </div>
+
+          <div class="col-md-6">
+            <table class="table table-bordered" id="noticesTable">
+              <thead>
+                <tr>
+                  <th>Title</th><th>Content</th><th>Target</th><th>Dept</th><th>Year</th><th>Valid Till</th>
+                </tr>
+              </thead>
+              <tbody><tr><td colspan="6">Loading notices…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="charts" class="section">
+        <h2>📈 Analytics</h2>
+        <div class="row">
+          <div class="col-md-6"><canvas id="creditsChart"></canvas></div>
+          <div class="col-md-6"><canvas id="tasksChart"></canvas></div>
+          <div class="col-md-6"><canvas id="attendanceChart"></canvas></div>
+          <div class="col-md-6"><canvas id="leavesChart"></canvas></div>
+        </div>
+      </section>
+    </main>
   </div>
-</section>
 </div>
 
 <script>
-const apiBase = `http://localhost:3000/api/admin`;
+document.querySelectorAll('#sidebar .nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    document.querySelectorAll('#sidebar .nav-link').forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadDashboard();
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    const target = link.getAttribute('data-section');
+    document.getElementById(target).classList.add('active');
+  });
 });
-
-async function loadDashboard() {
-  const [users, logs, requests, notices] = await Promise.all([
-    fetch(`${apiBase}/users`).then(r => r.json()),
-    fetch(`${apiBase}/logs`).then(r => r.json()),
-    fetch(`${apiBase}/requests`).then(r => r.json()),
-    fetch(`http://localhost:3000/api/notices/all`).then(r => r.json())
-  ]);
-
-  populateUsers(users);
-  populateLogs(logs);
-  populateRequests(requests);
-  populateLeaderboard(users);
-  renderCharts(users, logs);
-  populateNotices(notices);
-}
-
-function populateUsers(users) {
-  const tbody = document.querySelector('#usersTable tbody');
-  tbody.innerHTML = '';
-  users.forEach(u => {
-    const row = tbody.insertRow();
-    row.innerHTML = `<td>${u.name}</td><td>${u.email}</td><td>${u.credits}</td>`;
-  });
-}
-
-function populateLogs(logs) {
-  const tbody = document.querySelector('#logsTable tbody');
-  tbody.innerHTML = '';
-  logs.forEach(l => {
-    const row = tbody.insertRow();
-    row.innerHTML = `<td>${l.from_user.name}</td><td>${l.to_user.name}</td><td>${l.task}</td><td>${l.hours}</td>`;
-  });
-}
-
-function populateRequests(reqs) {
-  const tbody = document.querySelector('#requestsTable tbody');
-  tbody.innerHTML = '';
-  reqs.forEach(r => {
-    const row = tbody.insertRow();
-    const fulfiller = r.fulfilled_by?.name || 'N/A';
-    row.innerHTML = `<td>${r.by_user.name}</td><td>${r.task}</td><td>${r.credits_used}</td><td>${r.status}</td><td>${fulfiller}</td>`;
-  });
-}
-
-function populateLeaderboard(users) {
-  const sorted = [...users].sort((a, b) => b.credits - a.credits).slice(0, 3);
-  const board = document.getElementById('leaderboardCards');
-  board.innerHTML = '';
-  sorted.forEach((u, i) => {
-    board.innerHTML += `
-      <div class="col-md-4">
-        <div class="card text-white bg-success mb-3">
-          <div class="card-header">#${i + 1}</div>
-          <div class="card-body">
-            <h5 class="card-title">${u.name}</h5>
-            <p class="card-text">${u.credits} Credits</p>
-          </div>
-        </div>
-      </div>`;
-  });
-}
-
-function populateNotices(notices) {
-     console.log("Notices received:", notices);
-  const tbody = document.querySelector('#noticesTable tbody');
-  if (!tbody) return console.error("Notices table body not found.");
-  tbody.innerHTML = '';
-  if (!notices.length) {
-    tbody.innerHTML = `<tr><td colspan="6">No notices available</td></tr>`;
-    return;
-  }
-
-  notices.forEach(n => {
-    const row = tbody.insertRow();
-    row.innerHTML = `
-      <td>${n.title}</td>
-      <td>${n.content}</td>
-      <td>${n.targetAudience}</td>
-      <td>${n.department || '-'}</td>
-      <td>${n.year || '-'}</td>
-      <td>${n.validTill ? new Date(n.validTill).toLocaleDateString() : '-'}</td>`;
-  });
-}
-
-// 📄 Handles notice form submission
-document.getElementById('noticeForm').addEventListener('submit', e => {
-  e.preventDefault();
-
-  const title = document.getElementById('noticeTitle').value.trim();
-  const content = document.getElementById('noticeContent').value.trim();
-  const targetAudience = document.getElementById('noticeAudience').value;
-  const department = document.getElementById('noticeDepartment').value.trim();
-  const year = document.getElementById('noticeYear').value;
-  const validTill = document.getElementById('noticeValidTill').value;
-
-  fetch(`http://localhost:3000/api/notices`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      title, content, createdBy: 'ADMIN_ID',
-      targetAudience, department: department || undefined,
-      year: year || undefined, validTill: validTill || undefined
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert(data.message || 'Notice created');
-    document.getElementById('noticeForm').reset();
-    loadDashboard();
-  })
-  .catch(err => alert(err.message));
-});
-
-let creditsChartInstance = null;
-let tasksChartInstance = null;
-
-function renderCharts(users, logs) {
-  if (creditsChartInstance) {
-    creditsChartInstance.destroy();
-  }
-  if (tasksChartInstance) {
-    tasksChartInstance.destroy();
-  }
-
-  const userHoursMap = {};
-  logs.forEach(l => {
-    if (!userHoursMap[l.from_user._id]) {
-      userHoursMap[l.from_user._id] = { name: l.from_user.name, hours: 0 };
-    }
-    userHoursMap[l.from_user._id].hours += l.hours || 0;
-  });
-
-  const sortedUsers = Object.values(userHoursMap).sort((a, b) => b.hours - a.hours).slice(0, 5);
-
-  const creditsCtx = document.getElementById('creditsChart').getContext('2d');
-  creditsChartInstance = new Chart(creditsCtx, {
-    type: 'bar',
-    data: {
-      labels: sortedUsers.map(u => u.name),
-      datasets: [{
-        label: 'Hours Helping Others',
-        data: sortedUsers.map(u => u.hours),
-        backgroundColor: 'rgba(75, 192, 192, 0.7)'
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        title: { display: true, text: 'Top 5 Users by Hours Spent Helping' }
-      }
-    }
-  });
-
-  const taskCounts = {};
-  logs.forEach(l => {
-    taskCounts[l.task] = (taskCounts[l.task] || 0) + 1;
-  });
-
-  const tasksCtx = document.getElementById('tasksChart').getContext('2d');
-  tasksChartInstance = new Chart(tasksCtx, {
-    type: 'doughnut',
-    data: {
-      labels: Object.keys(taskCounts),
-      datasets: [{
-        label: 'Tasks',
-        data: Object.values(taskCounts),
-        backgroundColor: [
-          'rgba(255,99,132,0.7)',
-          'rgba(54,162,235,0.7)',
-          'rgba(255,206,86,0.7)',
-          'rgba(75,192,192,0.7)',
-          'rgba(153,102,255,0.7)'
-        ]
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        title: { display: true, text: 'Help Tasks Distribution' }
-      }
-    }
-  });
-}
-
-
-function downloadCSV(tableId, filename) {
-  const rows = Array.from(document.querySelectorAll(`#${tableId} tr`));
-  const csv = rows.map(r => Array.from(r.cells).map(c => `"${c.innerText}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-}
-
-function filterTables() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  document.querySelectorAll('table tbody tr').forEach(row => {
-    row.style.display = [...row.cells].some(c => c.innerText.toLowerCase().includes(q)) ? '' : 'none';
-  });
-}
 </script>
 
+<script src="js/admin.js"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@ const attendanceRoutes = require('./routes/attendanceRoutes');
 const assignmentRoutes = require('./routes/assignmentRoutes');
 const noticeRoutes = require('./routes/noticeRoutes');
 const facultyRoutes = require('./routes/facultyRoutes');
-
+const leaveRoutes = require('./routes/leaveRoutes');
 const app = express();
 
 // middleware
@@ -36,8 +36,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/assignment', assignmentRoutes);
 app.use('/api/notices', noticeRoutes);
-app.use('/api/faculty', require('./routes/facultyRoutes'));
-
+app.use('/api/faculty', facultyRoutes);
+app.use('/api/leave', leaveRoutes);
 
 app.listen(3000, () => {
   console.log("🎯 Server started on http://localhost:3000");
